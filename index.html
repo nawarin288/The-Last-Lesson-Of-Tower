@@ -149,7 +149,6 @@ function makeCharCard(char){
       const weaponId = e.dataTransfer.getData('weaponId');
       const weapon = weapons.find(w => w.id === weaponId);
       if(weapon){
-        char.weapons[idx] = weapon.name;
         inp.value = weapon.name;
         char.hp = Math.max(0,char.hp-5);
         el.querySelector('.stat[data-stat="hp"] .value').textContent = char.hp;
