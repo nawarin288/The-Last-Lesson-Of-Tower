@@ -12,45 +12,204 @@
   --accent:#ffcc00;
   --glass: rgba(255,255,255,0.04);
 }
+
 *{box-sizing:border-box}
+
 body{
   margin:0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
   background: linear-gradient(180deg,#0b0d14 0%, #0f1221 100%);
   color:#eaf0ff;
   padding:28px;
 }
+
 header{max-width:1200px;margin:0 auto 20px}
 h1{margin:0 0 8px;font-size:20px}
 p.lead{margin:0;color:var(--muted)}
+
 .wrap{display:block;max-width:1200px;margin:20px auto}
-.panel{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.5)}
-.chars{display:flex;flex-direction:column;gap:12px}
-.card{
-  display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:10px;background:linear-gradient(180deg,var(--glass),transparent);
-  border:1px solid rgba(255,255,255,0.03)
+
+.panel{
+  background:var(--card);
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
 }
-.avatar{width:150px;height:150px;border-radius:16px;background:#222;flex:0 0 150px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+
+.chars{display:flex;flex-direction:column;gap:12px}
+
+.card{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:12px;
+  border-radius:10px;
+  background:linear-gradient(180deg,var(--glass),transparent);
+  border:1px solid rgba(255,255,255,0.03);
+}
+
+.avatar{
+  width:150px;
+  height:150px;
+  border-radius:16px;
+  background:#222;
+  flex:0 0 150px;
+  object-fit:cover;
+}
+
 .meta{flex:1}
+
 .name{font-weight:700;margin-bottom:6px}
 .role{color:var(--muted);font-size:13px;margin-bottom:8px}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
+
+.stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
 .stat{
   background:rgba(255,255,255,0.03);
-  padding:8px;border-radius:8px;min-width:110px;
+  padding:8px;
+  border-radius:8px;
+  min-width:110px;
 }
+
 .stat .label{font-size:12px;color:var(--muted)}
 .stat .value{font-weight:700;font-size:18px;margin-top:4px}
-.controls{display:flex;gap:8px;align-items:center;margin-top:8px}
-button{cursor:pointer;border:0;padding:8px 10px;border-radius:8px;background:#222;color:#fff}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
-input[type=text]{width:100%;padding:6px;border-radius:6px;border:0;background:#0e1116;color:#fff}
-.weaponsList{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+
+.controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+  padding:8px 10px;
+  border-radius:8px;
+  background:#222;
+  color:#fff;
+}
+
+button.ghost{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+/* =========================
+    Weapons & Skill Inputs
+========================= */
+.weaponsList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:6px;
+}
+
+/* ช่องอาวุธ */
+.weaponsList input[type=text]{
+  width:100%;
+  padding:6px;
+  border-radius:6px;
+  border:0;
+  background:#0e1116;
+  color:#fff;
+}
+
+/* ช่องความสามารถ (Skill) */
+.stat input[readonly]{
+  width:100%;
+  padding:6px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.05);
+  color:#ffcc00;
+  font-weight:500;
+  cursor:default;
+}
+
+/* =========================
+    Weapon Card
+========================= */
 .weaponCard{
-  padding:6px 8px;background:#222;border-radius:6px;cursor:grab;
+  padding:6px 8px;
+  background:#222;
+  border-radius:6px;
+  cursor:grab;
   user-select:none;
 }
 .weaponCard:hover{background:#333;}
+
+.dicePanel{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:160px;
+  background:#171827;
+  padding:14px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 0 12px #0008;
+  z-index:100;
+}
+
+.dicePanel button{
+  width:100%;
+  margin:5px 0;
+  padding:8px;
+  background:#222;
+  border-radius:8px;
+  border:1px solid #333;
+  color:#fff;
+}
+
+.diceResult{
+  margin-top:10px;
+  font-size:20px;
+  font-weight:bold;
+}
+
+@media (max-width: 700px){
+
+  body{
+    padding:14px;
+  }
+
+  .card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+
+  .avatar{
+    width:120px;
+    height:120px;
+    flex:0 0 120px;
+  }
+
+  .stats{
+    justify-content:center;
+  }
+
+  .controls{
+    justify-content:center;
+  }
+
+  .weaponsList{
+    justify-content:center;
+  }
+
+  .dicePanel{
+    right:10px;
+    bottom:10px;
+    width:140px;
+    padding:10px;
+  }
+}
 </style>
 </head>
 <body>
@@ -69,6 +228,15 @@ input[type=text]{width:100%;padding:6px;border-radius:6px;border:0;background:#0
     <strong>การ์ดอาวุธ</strong>
     <div class="chars" id="weaponsContainer"></div>
   </div>
+</div>
+
+<div class="dicePanel">
+  <h3 style="margin-top:0">Dice & Coin</h3>
+  <button onclick="rollDice(3)">🎲 D3</button>
+  <button onclick="rollDice(6)">🎲 D6</button>
+  <button onclick="rollDice(20)">🎲 D20</button>
+  <button onclick="flipCoin()">🪙 เหรียญ</button>
+  <div id="diceResult" class="diceResult">-</div>
 </div>
 
 <script>
@@ -90,6 +258,7 @@ const weaponsContainer = document.getElementById('weaponsContainer');
 function renderAll(){
   charsContainer.innerHTML = '';
   chars.forEach(c => charsContainer.appendChild(makeCharCard(c)));
+
   weaponsContainer.innerHTML = '';
   weapons.forEach(w => weaponsContainer.appendChild(makeWeaponCard(w)));
 }
@@ -133,26 +302,23 @@ function makeCharCard(char){
   el.querySelectorAll('button.inc, button.dec').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const field = btn.dataset.field;
-      char[field] = Math.max(0,char[field]+(btn.classList.contains('inc')?1:-1));
+      char[field] = Math.max(0,char[field] + (btn.classList.contains('inc')?1:-1));
       el.querySelector(`.stat[data-stat="${field}"] .value`).textContent = char[field];
-      el.querySelector('img.avatar').src = char.hp>0?char.avatar:char.avatarLowHP;
+      el.querySelector('img.avatar').src = char.hp>0 ? char.avatar : char.avatarLowHP;
     });
   });
 
   el.querySelectorAll('.weaponsList input[type=text]').forEach(inp=>{
     const idx = parseInt(inp.dataset.index);
-    inp.addEventListener('input', e=>{
-      char.weapons[idx] = e.target.value;
-    });
+    inp.addEventListener('input', e=> char.weapons[idx] = e.target.value);
+
     inp.addEventListener('dragover', e=> e.preventDefault());
     inp.addEventListener('drop', e=>{
-      const weaponId = e.dataTransfer.getData('weaponId');
-      const weapon = weapons.find(w => w.id === weaponId);
-      if(weapon){
-        char.weapons[idx] = weapon.name;
-        inp.value = weapon.name;
-        el.querySelector('.stat[data-stat="hp"] .value').textContent = char.hp;
-        el.querySelector('img.avatar').src = char.hp>0?char.avatar:char.avatarLowHP;
+      const wid = e.dataTransfer.getData('weaponId');
+      const w = weapons.find(x => x.id === wid);
+      if(w){
+        char.weapons[idx] = w.name;
+        inp.value = w.name;
       }
     });
   });
@@ -166,14 +332,29 @@ function makeWeaponCard(weapon){
   el.textContent = weapon.name;
   el.title=`Skill: ${weapon.skill}\n${weapon.desc}`;
   el.draggable = true;
-  el.addEventListener('dragstart', e=>{
-    e.dataTransfer.setData('weaponId', weapon.id);
+
+  el.addEventListener('dragstart',e=>{
+    e.dataTransfer.setData('weaponId',weapon.id);
   });
-  el.addEventListener('click', ()=>alert(`${weapon.name}\nSkill:${weapon.skill}\nรายละเอียด:${weapon.desc}`));
+
+  el.addEventListener('click',()=>{
+    alert(`${weapon.name}\nSkill: ${weapon.skill}\nรายละเอียด: ${weapon.desc}`);
+  });
+
   return el;
 }
 
 renderAll();
+
+function rollDice(num){
+  const result = Math.floor(Math.random()*num)+1;
+  document.getElementById('diceResult').textContent = result;
+}
+
+function flipCoin(){
+  const result = Math.random() < 0.5 ? "หัว" : "ก้อย";
+  document.getElementById('diceResult').textContent = result;
+}
 </script>
 </body>
 </html>
