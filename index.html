@@ -3,357 +3,463 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Last Lesson Of Tower</title>
+<title>Character Editor - Fear&Hunger Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0f1221;
-  --card:#171827;
-  --muted:#9aa0b4;
-  --accent:#ffcc00;
-  --glass: rgba(255,255,255,0.04);
-}
-
-*{box-sizing:border-box}
-
-body{
+/* =================== BASE =================== */
+body {
   margin:0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
-  background: linear-gradient(180deg,#0b0d14 0%, #0f1221 100%);
-  color:#eaf0ff;
-  padding:28px;
+  font-family: 'Cinzel', serif, monospace;
+  background:#0a0a0a;
+  color:#e8e6d8;
 }
+a, button { font-family: inherit; }
 
-header{max-width:1200px;margin:0 auto 20px}
-h1{margin:0 0 8px;font-size:20px}
-p.lead{margin:0;color:var(--muted)}
+/* =================== TABS =================== */
+.tabs { display:flex; border-bottom:2px solid #555; flex-wrap:wrap; }
+.tab { padding:10px 20px; cursor:pointer; transition:0.2s; color:#aaa; }
+.tab.active { color:#d9b26c; border-bottom:2px solid #d9b26c; font-weight:bold; }
+.tab-content { display:none; padding:20px; max-width:900px; margin:0 auto; }
+.tab-content.active { display:block; }
 
-.wrap{display:block;max-width:1200px;margin:20px auto}
-
-.panel{
-  background:var(--card);
-  padding:18px;
-  border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.5);
-}
-
-.chars{display:flex;flex-direction:column;gap:12px}
-
+/* =================== CARD =================== */
 .card{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  padding:12px;
-  border-radius:10px;
-  background:linear-gradient(180deg,var(--glass),transparent);
-  border:1px solid rgba(255,255,255,0.03);
+  display:flex; gap:12px; padding:12px; border-radius:10px;
+  background:#1c1c1c; border:1px solid #555; align-items:center;
+  transition:0.3s; box-shadow: 0 0 6px #000 inset; position: relative;
 }
+.card.low-hp{
+  border-color:#a80000; background:#220000; box-shadow:0 0 10px #a80000 inset;
+}
+.card.low-hp .avatar{
+  filter: saturate(2) contrast(1.5) brightness(0.7) hue-rotate(-10deg);
+  border-color:#a80000;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%{box-shadow:0 0 6px #a80000;}
+  50%{box-shadow:0 0 15px #ff4444;}
+  100%{box-shadow:0 0 6px #a80000;}
+}
+.avatar{ width:120px; height:120px; border-radius:12px; object-fit:cover; border:2px solid #555; transition:0.3s; position: relative; }
+.meta{flex:1;}
+.name{font-weight:700; font-size:20px; margin-bottom:4px; letter-spacing:0.5px;}
+.role{color:#aaa; font-size:13px; margin-bottom:8px;}
 
-.avatar{
-  width:150px;
-  height:150px;
-  border-radius:16px;
-  background:#222;
-  flex:0 0 150px;
+/* =================== STATS =================== */
+.stats{ display:flex; gap:8px; flex-wrap:wrap; }
+.stat{ background:#111; padding:6px 8px; border-radius:6px; min-width:70px; text-align:center; border:1px solid #555; }
+.stat .label{ font-size:12px; color:#999; }
+.stat .value{ font-weight:700; font-size:16px; margin-top:2px; }
+input[type=number]{ width:50px; text-align:center; border-radius:4px; border:1px solid #555; background:#111; color:#e8e6d8; font-family:'Cinzel', serif, monospace; }
+button.stat-btn{ background:#111; border-radius:4px; padding:2px 6px; margin-left:2px; cursor:pointer; color:#e8e6d8; font-family:'Cinzel', serif, monospace; }
+button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
+
+/* =================== HP BAR =================== */
+.hp-bar{ width:100%; height:12px; background:#222; border-radius:20px; overflow:hidden; margin-top:4px; border:1px solid #555; }
+.hp-inner{ height:100%; width:100%; background:#d9b26c; transition:width 0.35s ease; }
+
+/* =================== SKILL INPUT =================== */
+.skill-input{ width:100%; padding:6px; border-radius:6px; border:1px solid #555; background:#111; color:#d9b26c; font-weight:500; font-family:'Cinzel', serif, monospace; }
+
+/* =================== INVENTORY =================== */
+.inventory{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 แถวต่อบรรทัด */
+  gap: 12px; /* ช่องว่างระหว่าง item */
+  margin-top: 15px;
+}
+.weaponCard{
+  width:100%; /* เต็ม column ของ grid */
+  padding:8px;
+  border-radius:10px;
+  background:#1c1c1c;
+  text-align:center;
+  cursor:grab;
+  user-select:none;
+  transition:0.3s;
+  border:1px solid #555;
+  font-size:14px;
+  color:#e8e6d8;
+  font-family:'Cinzel', serif, monospace;
+}
+.weaponCard img{
+  width:120px;  /* ขนาดใหญ่ */
+  height:120px;
+  display:block;
+  margin:0 auto 6px;
+  border-radius:8px;
   object-fit:cover;
 }
 
-.meta{flex:1}
-
-.name{font-weight:700;margin-bottom:6px}
-.role{color:var(--muted);font-size:13px;margin-bottom:8px}
-
-.stats{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+/* =================== ITEM INFO BAR =================== */
+#itemInfoBar img{
+  width:150px;          /* ขนาดใหญ่กว่าตัวละคร */
+  height:150px;
+  margin:0 auto 8px;
+  border-radius:10px;
+  object-fit:cover;
 }
 
-.stat{
-  background:rgba(255,255,255,0.03);
-  padding:8px;
-  border-radius:8px;
-  min-width:110px;
-}
-
-.stat .label{font-size:12px;color:var(--muted)}
-.stat .value{font-weight:700;font-size:18px;margin-top:4px}
-
-.controls{
+/* =================== WEAPON SLOT =================== */
+.weaponSlot{
+  border:1px dashed #555;
+  padding:6px;
+  width:150px;          /* ขนาดใหญ่ */
+  height:150px;
   display:flex;
-  gap:8px;
   align-items:center;
-  margin-top:8px;
-  flex-wrap:wrap;
+  justify-content:center;
+  border-radius:10px;
+  color:#aaa;
+  flex-direction:column;
+  transition:0.3s;
+  font-size:14px;
 }
-
-button{
-  cursor:pointer;
-  border:0;
-  padding:8px 10px;
+.weaponSlot img{
+  width:120px;          /* ขนาดใหญ่ */
+  height:120px;
+  margin-bottom:4px;
   border-radius:8px;
-  background:#222;
-  color:#fff;
+  object-fit:cover;
 }
 
-button.ghost{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.06);
+/* =================== SUB-TABS =================== */
+.sub-tabs{ display:flex; gap:8px; margin:8px 0; }
+.sub-tab{ cursor:pointer; padding:4px 10px; border-radius:4px; background:#222; color:#aaa; transition:0.2s; font-family:'Cinzel', serif, monospace; font-size:12px; }
+.sub-tab.active{ background:#d9b26c; color:#111; font-weight:600; }
+.sub-tab-content{ display:none; margin-top:10px; }
+.sub-tab-content.active{ display:block; }
+
+/* =================== ITEM INFO BAR =================== */
+#itemInfoBar {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 220px; /* ขยายความกว้าง */
+  max-width: 50%;
+  background: #1c1c1c;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  color: #e8e6d8;
+  font-size: 12px;
+  z-index: 100;
+}
+#itemInfoBar img {
+  width: 120px;    /* ขนาดใกล้เท่า avatar */
+  height: 120px;
+  margin: 0 auto 8px;
+  border-radius: 8px;
+  object-fit: cover; /* ให้รูปเต็มขนาดโดยไม่บิด */
 }
 
-/* =========================
-    Weapons & Skill Inputs
-========================= */
-.weaponsList{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:6px;
+/* =================== INTRO SCREEN =================== */
+#introScreen {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:#fff; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;
+  transition: background 1s ease, opacity 2s ease;
 }
+#introContent { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; }
+#introText { font-family: 'Cinzel', serif; font-size:6vw; font-weight:700; color:#000; text-align:center; opacity:0; transform: scale(1); transition: opacity 1.5s ease, transform 0.5s ease, color 0.5s ease; }
+#lastWord, #towerWord { transition: color 0.5s ease; }
+#loadingCircle { position: relative; width: 80px; height: 80px; opacity:0; }
+#loadingCircle svg { transform: rotate(-90deg); }
+#loadingPercent { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel', serif; color:#000; font-weight:bold; font-size:16px; transition: opacity 1s ease; }
 
-/* ช่องอาวุธ */
-.weaponsList input[type=text]{
-  width:100%;
-  padding:6px;
-  border-radius:6px;
-  border:0;
-  background:#0e1116;
-  color:#fff;
+/* =================== RESPONSIVE =================== */
+@media(max-width:600px){
+  .card{ flex-direction:column; align-items:center; }
+  .avatar{ width:100px; height:100px; }
+  .stats{ flex-direction:column; gap:4px; }
+  #itemInfoBar{ position:static; width:100%; max-width:none; }
 }
-
-/* ช่องความสามารถ (Skill) */
-.stat input[readonly]{
-  width:100%;
-  padding:6px;
-  border-radius:6px;
-  border:1px solid rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.05);
-  color:#ffcc00;
-  font-weight:500;
-  cursor:default;
-}
-
-/* =========================
-    Weapon Card
-========================= */
-.weaponCard{
-  padding:6px 8px;
-  background:#222;
-  border-radius:6px;
-  cursor:grab;
-  user-select:none;
-}
-.weaponCard:hover{background:#333;}
-
-.dicePanel{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  width:160px;
-  background:#171827;
-  padding:14px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 0 12px #0008;
-  z-index:100;
-}
-
-.dicePanel button{
-  width:100%;
-  margin:5px 0;
-  padding:8px;
-  background:#222;
-  border-radius:8px;
-  border:1px solid #333;
-  color:#fff;
-}
-
-.diceResult{
-  margin-top:10px;
-  font-size:20px;
-  font-weight:bold;
-}
-
-@media (max-width: 700px){
-
-  body{
-    padding:14px;
-  }
-
-  .card{
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-  }
-
-  .avatar{
-    width:120px;
-    height:120px;
-    flex:0 0 120px;
-  }
-
-  .stats{
-    justify-content:center;
-  }
-
-  .controls{
-    justify-content:center;
-  }
-
-  .weaponsList{
-    justify-content:center;
-  }
-
-  .dicePanel{
-    right:10px;
-    bottom:10px;
-    width:140px;
-    padding:10px;
-  }
-}
+.selectBtn{ margin-top:6px; padding:4px 8px; background:#222; color:#d9b26c; border-radius:4px; border:1px solid #555; cursor:pointer; font-family:'Cinzel', serif, monospace; transition:0.2s; }
+.selectBtn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
 </style>
 </head>
 <body>
-<header>
-  <h1>The Last Lesson Of Tower</h1>
-  <p class="lead">ปรับค่าสเตตัส ใส่อาวุธได้ 3 ช่อง กดอาวุธเพื่อดูรายละเอียด ลากวางอาวุธเพื่อใส่ตัวละคร</p>
-</header>
-
-<div class="wrap">
-  <div class="panel">
-    <strong>Character</strong>
-    <div class="chars" id="charsContainer"></div>
-
-    <hr style="margin:12px 0">
-
-    <strong>การ์ดอาวุธ</strong>
-    <div class="chars" id="weaponsContainer"></div>
+<!-- ================== INTRO SCREEN =================== -->
+<div id="introScreen">
+  <div id="introContent">
+    <div id="introText">
+      The <span id="lastWord">Last</span> Lesson Of <span id="towerWord">Tower</span>
+    </div>
+    <div id="loadingCircle">
+      <svg width="80" height="80">
+        <circle cx="40" cy="40" r="35" stroke="#555" stroke-width="4" fill="none" />
+        <circle id="progressCircle" cx="40" cy="40" r="35" stroke="#000" stroke-width="4" fill="none"
+                stroke-dasharray="219.911" stroke-dashoffset="219.911" stroke-linecap="round"/>
+      </svg>
+      <div id="loadingPercent">0%</div>
+    </div>
   </div>
 </div>
 
-<div class="dicePanel">
-  <h3 style="margin-top:0">Dice & Coin</h3>
-  <button onclick="rollDice(3)">🎲 D3</button>
-  <button onclick="rollDice(6)">🎲 D6</button>
-  <button onclick="rollDice(20)">🎲 D20</button>
-  <button onclick="flipCoin()">🪙 เหรียญ</button>
-  <div id="diceResult" class="diceResult">-</div>
+<div class="tabs">
+  <div class="tab active" data-tab="tab1">Concept / Story</div>
+  <div class="tab" data-tab="tab2">Character Preview</div>
+  <div class="tab" data-tab="tab3">Character Editor</div>
 </div>
 
+<div id="tab1" class="tab-content active">
+  <h2>Concept / Story</h2>
+  <p>นี่คือแนวคิดและเนื้อเรื่องของ The Last Lesson Of Tower...</p>
+</div>
+
+<div id="tab2" class="tab-content">
+  <h2>Character Preview</h2>
+  <div id="charsPreview"></div>
+</div>
+
+<div id="tab3" class="tab-content">
+  <h2>Character Editor</h2>
+  <div id="editorContainer"></div>
+  <h3>Inventory / Items</h3>
+  <div id="weaponsContainer" class="inventory"></div>
+</div>
+
+<div id="itemInfoBar"></div>
+
 <script>
+// =================== INTRO SCREEN ===================
+window.addEventListener('load', ()=> {
+  const introText = document.getElementById('introText');
+  const introScreen = document.getElementById('introScreen');
+  const lastWord = document.getElementById('lastWord');
+  const towerWord = document.getElementById('towerWord');
+  const loadingCircle = document.getElementById('loadingCircle');
+  const loadingPercent = document.getElementById('loadingPercent');
+  const progressCircle = document.getElementById('progressCircle');
+  const circleLength = 2 * Math.PI * 35;
+
+  setTimeout(()=> introText.style.opacity = 1, 100);
+
+  setTimeout(()=> {
+    loadingCircle.style.transition = 'opacity 1s ease';
+    loadingCircle.style.opacity = 1;
+
+    let start=null;
+    const duration=3000;
+    function animate(ts){
+      if(!start) start=ts;
+      const progress = ts - start;
+      const eased = easeOutCubic(Math.min(progress/duration,1));
+      const percent = Math.floor(eased*100);
+      loadingPercent.innerText = percent + '%';
+      progressCircle.style.strokeDashoffset = circleLength*(1-eased);
+      if(progress<duration) requestAnimationFrame(animate);
+      else{
+        loadingPercent.innerText='100%';
+        progressCircle.style.strokeDashoffset=0;
+        introScreen.style.background='#000';
+        introText.style.color='#fff';
+        lastWord.style.color='#ff0000';
+        towerWord.style.color='#ff0000';
+        introText.style.transform='scale(0.7)';
+        setTimeout(()=> {
+          introText.style.opacity=0;
+          setTimeout(()=> loadingPercent.style.opacity=0,500);
+          setTimeout(()=> introScreen.style.display='none',2000);
+        },3000);
+      }
+    }
+    requestAnimationFrame(animate);
+  },1500);
+
+  function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
+});
+
+// =================== TABS ===================
+const tabs = document.querySelectorAll('.tab');
+const contents = document.querySelectorAll('.tab-content');
+tabs.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    contents.forEach(c=>c.classList.remove('active'));
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// =================== CHARACTERS ===================
 let chars = [
-  {id:'a', name:'Nine', role:'นักดาบสองมือ / The Gunner', hp:20, atk:5, def:10, weapons:['','',''], skill:'ถืออาวุธสองมือได้ด้วยมือเดียว', avatar:'images/1.JPG', avatarLowHP:'images/1.JPG'},
-  {id:'b', name:'Aun', role:'นักแม่นปืน / The Gambler', hp:20, atk:3, def:10, weapons:['','',''], skill:'สร้างกระสุนเองได้โดยไม่ต้องหากระสุน', avatar:'images/Aun.JPG', avatarLowHP:'images/Aun.JPG'},
-  {id:'d', name:'Lee', role:'นักพนัน / The Swordman', hp:20, atk:3, def:10, weapons:['','',''], skill:'รีเหรียญ', avatar:'images/Lee.JPG', avatarLowHP:'images/Lee.JPG'},
+  {id:'a', name:'Nine', role:'นักดาบสองมือ / The Swordman', hp:20, maxHp:20, atk:5, def:10, skill:'ถืออาวุธสองมือได้ด้วยมือเดียว', avatar:'images/1.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
+  {id:'b', name:'Aun', role:'นักแม่นปืน / The Gunner', hp:20, maxHp:20, atk:3, def:10, skill:'สร้างกระสุนเองได้', avatar:'images/Aun.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
+  {id:'d', name:'Lee', role:'นักพนัน / The Gambler', hp:20, maxHp:20, atk:3, def:10, skill:'รีเหรียญ', avatar:'images/Lee.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
 ];
 
+// =================== WEAPONS ===================
 const weapons = [
-  {id:'w1', name:'ปืนยาว', skill:'ตะกั่วศักสิทธิ์', desc:'ใช้ได้ 1 ครั้ง', img:'https://via.placeholder.com/40'},
-  {id:'w2', name:'ดาบยาว', skill:'สตาร์เบิร์สสตรีม', desc:'ใช้ได้ 1 ครั้ง', img:'https://via.placeholder.com/40'},
-  {id:'w3', name:'โล่เหล็ก', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w1', name:'ดาบสั้นพังๆ', skill:'ตะกั่วศักสิทธิ์', desc:'ใช้ได้ 1 ครั้ง', img:'images2/IMG_2349.JPG'},
+  {id:'w2', name:'ดาบยาวพังๆ', skill:'สตาร์เบิร์สสตรีม', desc:'ใช้ได้ 1 ครั้ง', img:'https://via.placeholder.com/40'},
+  {id:'w3', name:'ธนู แถมลูกธนู×3', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w4', name:'ลูกดอกธนู×5', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w5', name:'ชุดเกราะโซ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w6', name:'โล่ไม้', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w7', name:'ดาบสั้นขึ้นสนิม', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w8', name:'ดาบยาวขึ้นสนิม', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w9', name:'กระบองเล็ก', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w10', name:'กระบองขนาดใหญ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w11', name:'คำภีร์เวทย์ “ กูขอร่าย หนี้กยศ!!!! ”', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w12', name:'คำภีร์เวทย์ “ อังกฤษหรือสเปน ใครขยับมันเป็นเกย์!!! ”', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w13', name:'ลิ่มทำลายล้าง', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w14', name:'ปืนยาวแถมลูก5นัด', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  {id:'w15', name:'โคตรพ่อโคตรแม่ดาบใหญ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
 ];
 
-const charsContainer = document.getElementById('charsContainer');
+// =================== RENDER CHARACTER PREVIEW ===================
+const charsPreview = document.getElementById('charsPreview');
+charsPreview.innerHTML='';
+chars.forEach(c=>{
+  const el=document.createElement('div');
+  el.className='card';
+  el.innerHTML=`<img src="${c.avatar}" class="avatar"><div class="meta"><div class="name">${c.name}</div><div class="role">${c.role}</div></div><button class="selectBtn">Select</button>`;
+  el.querySelector('.selectBtn').addEventListener('click', ()=>{
+    charsPreview.style.transition='opacity 0.7s ease';
+    charsPreview.style.opacity=0;
+    setTimeout(()=>{
+      openEditor(c.id);
+      // switch to Character Editor tab
+      tabs.forEach(t=>t.classList.remove('active'));
+      document.querySelector('.tab[data-tab="tab3"]').classList.add('active');
+      contents.forEach(c=>c.classList.remove('active'));
+      document.getElementById('tab3').classList.add('active');
+    },700);
+  });
+  charsPreview.appendChild(el);
+});
+
+// =================== RENDER INVENTORY ===================
 const weaponsContainer = document.getElementById('weaponsContainer');
+weaponsContainer.innerHTML='';
+weapons.forEach(w=>{
+  const el=document.createElement('div');
+  el.className='weaponCard';
+  el.innerHTML=`<img src="${w.img}">${w.name}`;
+  el.draggable=true;
+  el.title=`Skill: ${w.skill}\n${w.desc}`;
+  el.addEventListener('dragstart', e=> e.dataTransfer.setData('weaponId', w.id));
+  el.addEventListener('click', ()=> openWeaponInfo(w));
+  weaponsContainer.appendChild(el);
+});
 
-function renderAll(){
-  charsContainer.innerHTML = '';
-  chars.forEach(c => charsContainer.appendChild(makeCharCard(c)));
-
-  weaponsContainer.innerHTML = '';
-  weapons.forEach(w => weaponsContainer.appendChild(makeWeaponCard(w)));
+// =================== ITEM INFO ===================
+const itemInfoBar = document.getElementById('itemInfoBar');
+function openWeaponInfo(w){
+  itemInfoBar.style.display='flex';
+  itemInfoBar.innerHTML=`<img src="${w.img}"><div><b>${w.name}</b></div><div>Skill: ${w.skill}</div><div>${w.desc}</div><button class="closeBtn">Close</button>`;
+  itemInfoBar.querySelector('.closeBtn').addEventListener('click', ()=> itemInfoBar.style.display='none');
 }
 
-function makeCharCard(char){
-  const el = document.createElement('div');
-  el.className='card';
-  el.innerHTML=`
-    <img src="${char.hp>0?char.avatar:char.avatarLowHP}" class="avatar">
-    <div class="meta">
-      <div class="name">${char.name}</div>
-      <div class="role">${char.role}</div>
-      <div class="stats">
-        <div class="stat" data-stat="hp"><div class="label">HP</div><div class="value">${char.hp}</div></div>
-        <div class="stat" data-stat="atk"><div class="label">ATK</div><div class="value">${char.atk}</div></div>
-        <div class="stat" data-stat="def"><div class="label">DEF</div><div class="value">${char.def}</div></div>
-      </div>
-      <div class="stat">
-        <label>ความสามารถ</label>
-        <input type="text" value="${char.skill}" readonly>
-      </div>
-      <div class="weaponsList">
-        ${char.weapons.map((w,i)=>`
-          <div class="stat">
-            <label>Weapon ${i+1}</label>
-            <input type="text" value="${w}" data-index="${i}" placeholder="ใส่อาวุธ">
-          </div>
-        `).join('')}
-      </div>
-      <div class="controls">
-        <button class="dec" data-field="hp">- HP</button>
-        <button class="inc" data-field="hp">+ HP</button>
-        <button class="dec" data-field="atk">- ATK</button>
-        <button class="inc" data-field="atk">+ ATK</button>
-        <button class="dec" data-field="def">- DEF</button>
-        <button class="inc" data-field="def">+ DEF</button>
+// =================== OPEN EDITOR ===================
+function openEditor(charId){
+  const char = chars.find(c=>c.id===charId);
+  const editor = document.getElementById('editorContainer');
+  editor.innerHTML = `
+<div class="card" id="charCard">
+  <img src="${char.hp<=5 ? char.avatarLowHP : char.avatar}" class="avatar">
+  <div class="meta">
+    <div class="name">${char.name}</div>
+    <div class="role">${char.role}</div>
+
+    <div class="stats">
+      <div class="stat">HP<br><input type="number" id="hpInput" value="${char.hp}" min="0" max="${char.maxHp}"></div>
+      <div class="stat">ATK<br><input type="number" id="atkInput" value="${char.atk}" min="0"></div>
+      <div class="stat">DEF<br><input type="number" id="defInput" value="${char.def}" min="0"></div>
+    </div>
+    <div class="hp-bar"><div class="hp-inner" id="hpBar" style="width:${char.hp/char.maxHp*100}%"></div></div>
+
+    <div class="sub-tabs">
+      <div class="sub-tab active" data-tab="skill">Skill</div>
+      <div class="sub-tab" data-tab="weapons">Weapons</div>
+    </div>
+    <div class="sub-tab-content active" id="skill">
+      <input class="skill-input" value="${char.skill}">
+    </div>
+    <div class="sub-tab-content" id="weapons">
+      <div class="inventory">
+        ${char.weapons.map((w,i)=>`<div class="weaponSlot" data-index="${i}">${w?'<img src="'+w.img+'">'+w.name:'Empty'}</div>`).join('')}
       </div>
     </div>
-  `;
+  </div>
+</div>
+`;
 
-  el.querySelectorAll('button.inc, button.dec').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const field = btn.dataset.field;
-      char[field] = Math.max(0,char[field] + (btn.classList.contains('inc')?1:-1));
-      el.querySelector(`.stat[data-stat="${field}"] .value`).textContent = char[field];
-      el.querySelector('img.avatar').src = char.hp>0 ? char.avatar : char.avatarLowHP;
+  // =================== SUB-TABS ===================
+  const subTabs = editor.querySelectorAll('.sub-tab');
+  const subContents = editor.querySelectorAll('.sub-tab-content');
+  subTabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      subTabs.forEach(s=>s.classList.remove('active'));
+      t.classList.add('active');
+      subContents.forEach(c=>c.classList.remove('active'));
+      document.getElementById(t.dataset.tab).classList.add('active');
     });
   });
 
-  el.querySelectorAll('.weaponsList input[type=text]').forEach(inp=>{
-    const idx = parseInt(inp.dataset.index);
-    inp.addEventListener('input', e=> char.weapons[idx] = e.target.value);
+  // =================== HP / STATS ===================
+  const hpInput = document.getElementById('hpInput');
+  const atkInput = document.getElementById('atkInput');
+  const defInput = document.getElementById('defInput');
+  const hpBar = document.getElementById('hpBar');
+  const avatarImg = editor.querySelector('.avatar');
+  const cardDiv = editor.querySelector('.card');
 
-    inp.addEventListener('dragover', e=> e.preventDefault());
-    inp.addEventListener('drop', e=>{
-      const wid = e.dataTransfer.getData('weaponId');
-      const w = weapons.find(x => x.id === wid);
-      if(w){
-        char.weapons[idx] = w.name;
-        inp.value = w.name;
-      }
-    });
+  function updateHP(){
+    char.hp = Math.min(Math.max(0,parseInt(hpInput.value)||0),char.maxHp);
+    hpBar.style.width = (char.hp/char.maxHp*100)+'%';
+    if(char.hp <= 5){
+      avatarImg.src = char.avatarLowHP;
+      cardDiv.classList.add('low-hp');
+    } else {
+      avatarImg.src = char.avatar;
+      cardDiv.classList.remove('low-hp');
+    }
+  }
+  hpInput.addEventListener('input', updateHP);
+  atkInput.addEventListener('input', ()=> char.atk = parseInt(atkInput.value)||0 );
+  defInput.addEventListener('input', ()=> char.def = parseInt(defInput.value)||0 );
+
+  // =================== DRAG & DROP ===================
+  editor.addEventListener('dragover', e => e.preventDefault());
+  editor.addEventListener('drop', e => {
+    const weaponId = e.dataTransfer.getData('weaponId');
+    const weapon = weapons.find(w=>w.id===weaponId);
+    const slot = e.target.closest('.weaponSlot');
+    if(slot && weapon){
+      const index = parseInt(slot.dataset.index);
+      char.weapons[index] = weapon; // บันทึก weapon
+      slot.innerHTML = `<img src="${weapon.img}">${weapon.name}<button class="remove-btn">Remove</button>`;
+      slot.classList.add('filled');
+
+      // ปุ่ม Remove
+      const removeBtn = slot.querySelector('.remove-btn');
+      removeBtn.addEventListener('click', ()=>{
+        slot.innerHTML = 'Empty';
+        slot.classList.remove('filled');
+        char.weapons[index] = '';
+      });
+    }
   });
 
-  return el;
-}
-
-function makeWeaponCard(weapon){
-  const el = document.createElement('div');
-  el.className='weaponCard';
-  el.textContent = weapon.name;
-  el.title=`Skill: ${weapon.skill}\n${weapon.desc}`;
-  el.draggable = true;
-
-  el.addEventListener('dragstart',e=>{
-    e.dataTransfer.setData('weaponId',weapon.id);
+  // =================== INITIAL REMOVE BUTTONS ===================
+  const slots = editor.querySelectorAll('.weaponSlot');
+  slots.forEach((slot,i)=>{
+    if(char.weapons[i]){
+      slot.innerHTML = `<img src="${char.weapons[i].img}">${char.weapons[i].name}<button class="remove-btn">Remove</button>`;
+      slot.classList.add('filled');
+      slot.querySelector('.remove-btn').addEventListener('click', ()=>{
+        slot.innerHTML = 'Empty';
+        slot.classList.remove('filled');
+        char.weapons[i] = '';
+      });
+    }
   });
-
-  el.addEventListener('click',()=>{
-    alert(`${weapon.name}\nSkill: ${weapon.skill}\nรายละเอียด: ${weapon.desc}`);
-  });
-
-  return el;
-}
-
-renderAll();
-
-function rollDice(num){
-  const result = Math.floor(Math.random()*num)+1;
-  document.getElementById('diceResult').textContent = result;
-}
-
-function flipCoin(){
-  const result = Math.random() < 0.5 ? "หัว" : "ก้อย";
-  document.getElementById('diceResult').textContent = result;
 }
 </script>
 </body>
