@@ -7,13 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =================== BASE =================== */
-body {
-  margin:0;
-  font-family: 'Cinzel', serif, monospace;
-  background:#0a0a0a;
-  color:#e8e6d8;
-}
+body { margin:0; font-family:'Cinzel', serif, monospace; background:#0a0a0a; color:#e8e6d8; transition:0.3s; }
 a, button { font-family: inherit; }
+body.desktop .inventory { grid-template-columns: repeat(5, 1fr); }
+body.mobile .inventory { grid-template-columns: repeat(3, 1fr); }
+body.mobile .card{ flex-direction: column; align-items: center; }
+body.desktop .card{ flex-direction: row; align-items: flex-start; }
 
 /* =================== TABS =================== */
 .tabs { display:flex; border-bottom:2px solid #555; flex-wrap:wrap; }
@@ -23,24 +22,10 @@ a, button { font-family: inherit; }
 .tab-content.active { display:block; }
 
 /* =================== CARD =================== */
-.card{
-  display:flex; gap:12px; padding:12px; border-radius:10px;
-  background:#1c1c1c; border:1px solid #555; align-items:center;
-  transition:0.3s; box-shadow: 0 0 6px #000 inset; position: relative;
-}
-.card.low-hp{
-  border-color:#a80000; background:#220000; box-shadow:0 0 10px #a80000 inset;
-}
-.card.low-hp .avatar{
-  filter: saturate(2) contrast(1.5) brightness(0.7) hue-rotate(-10deg);
-  border-color:#a80000;
-  animation: pulse 1s infinite;
-}
-@keyframes pulse {
-  0%{box-shadow:0 0 6px #a80000;}
-  50%{box-shadow:0 0 15px #ff4444;}
-  100%{box-shadow:0 0 6px #a80000;}
-}
+.card{ display:flex; gap:12px; padding:12px; border-radius:10px; background:#1c1c1c; border:1px solid #555; align-items:center; transition:0.3s; box-shadow:0 0 6px #000 inset; position: relative; }
+.card.low-hp{ border-color:#a80000; background:#220000; box-shadow:0 0 10px #a80000 inset; }
+.card.low-hp .avatar{ filter: saturate(2) contrast(1.5) brightness(0.7) hue-rotate(-10deg); border-color:#a80000; animation:pulse 1s infinite; }
+@keyframes pulse {0%{box-shadow:0 0 6px #a80000;}50%{box-shadow:0 0 15px #ff4444;}100%{box-shadow:0 0 6px #a80000;}}
 .avatar{ width:120px; height:120px; border-radius:12px; object-fit:cover; border:2px solid #555; transition:0.3s; position: relative; }
 .meta{flex:1;}
 .name{font-weight:700; font-size:20px; margin-bottom:4px; letter-spacing:0.5px;}
@@ -52,7 +37,7 @@ a, button { font-family: inherit; }
 .stat .label{ font-size:12px; color:#999; }
 .stat .value{ font-weight:700; font-size:16px; margin-top:2px; }
 input[type=number]{ width:50px; text-align:center; border-radius:4px; border:1px solid #555; background:#111; color:#e8e6d8; font-family:'Cinzel', serif, monospace; }
-button.stat-btn{ background:#111; border-radius:4px; padding:2px 6px; margin-left:2px; cursor:pointer; color:#e8e6d8; font-family:'Cinzel', serif, monospace; }
+button.stat-btn{ background:#111; border-radius:4px; padding:2px 6px; margin-left:2px; cursor:pointer; color:#e8e6d6; font-family:'Cinzel', serif, monospace; }
 button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
 
 /* =================== HP BAR =================== */
@@ -63,66 +48,15 @@ button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
 .skill-input{ width:100%; padding:6px; border-radius:6px; border:1px solid #555; background:#111; color:#d9b26c; font-weight:500; font-family:'Cinzel', serif, monospace; }
 
 /* =================== INVENTORY =================== */
-.inventory{
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 แถวต่อบรรทัด */
-  gap: 12px; /* ช่องว่างระหว่าง item */
-  margin-top: 15px;
-}
-.weaponCard{
-  width:100%; /* เต็ม column ของ grid */
-  padding:8px;
-  border-radius:10px;
-  background:#1c1c1c;
-  text-align:center;
-  cursor:grab;
-  user-select:none;
-  transition:0.3s;
-  border:1px solid #555;
-  font-size:14px;
-  color:#e8e6d8;
-  font-family:'Cinzel', serif, monospace;
-}
-.weaponCard img{
-  width:120px;  /* ขนาดใหญ่ */
-  height:120px;
-  display:block;
-  margin:0 auto 6px;
-  border-radius:8px;
-  object-fit:cover;
-}
+.inventory{ display: grid; gap: 12px; margin-top: 15px; }
+.weaponCard{ width:100%; padding:8px; border-radius:10px; background:#1c1c1c; text-align:center; cursor:grab; user-select:none; transition:0.3s; border:1px solid #555; font-size:14px; color:#e8e6d8; font-family:'Cinzel', serif, monospace; }
+.weaponCard img{ width:120px; height:120px; display:block; margin:0 auto 6px; border-radius:8px; object-fit:cover; }
+.weaponSlot{ border:1px dashed #555; padding:6px; width:150px; height:150px; display:flex; align-items:center; justify-content:center; border-radius:10px; color:#aaa; flex-direction:column; transition:0.3s; font-size:14px; }
+.weaponSlot img{ width:120px; height:120px; margin-bottom:4px; border-radius:8px; object-fit:cover; }
 
 /* =================== ITEM INFO BAR =================== */
-#itemInfoBar img{
-  width:150px;          /* ขนาดใหญ่กว่าตัวละคร */
-  height:150px;
-  margin:0 auto 8px;
-  border-radius:10px;
-  object-fit:cover;
-}
-
-/* =================== WEAPON SLOT =================== */
-.weaponSlot{
-  border:1px dashed #555;
-  padding:6px;
-  width:150px;          /* ขนาดใหญ่ */
-  height:150px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
-  color:#aaa;
-  flex-direction:column;
-  transition:0.3s;
-  font-size:14px;
-}
-.weaponSlot img{
-  width:120px;          /* ขนาดใหญ่ */
-  height:120px;
-  margin-bottom:4px;
-  border-radius:8px;
-  object-fit:cover;
-}
+#itemInfoBar{ position: fixed; top: 80px; right: 20px; width:220px; max-width:50%; background:#1c1c1c; border:1px solid #555; border-radius:8px; padding:10px; display:none; flex-direction: column; gap:6px; color:#e8e6d8; font-size:12px; z-index:100; }
+#itemInfoBar img{ width:120px; height:120px; margin:0 auto 8px; border-radius:8px; object-fit:cover; }
 
 /* =================== SUB-TABS =================== */
 .sub-tabs{ display:flex; gap:8px; margin:8px 0; }
@@ -131,58 +65,36 @@ button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
 .sub-tab-content{ display:none; margin-top:10px; }
 .sub-tab-content.active{ display:block; }
 
-/* =================== ITEM INFO BAR =================== */
-#itemInfoBar {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  width: 220px; /* ขยายความกว้าง */
-  max-width: 50%;
-  background: #1c1c1c;
-  border: 1px solid #555;
-  border-radius: 8px;
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  color: #e8e6d8;
-  font-size: 12px;
-  z-index: 100;
-}
-#itemInfoBar img {
-  width: 120px;    /* ขนาดใกล้เท่า avatar */
-  height: 120px;
-  margin: 0 auto 8px;
-  border-radius: 8px;
-  object-fit: cover; /* ให้รูปเต็มขนาดโดยไม่บิด */
-}
-
 /* =================== INTRO SCREEN =================== */
-#introScreen {
-  position: fixed;
-  top:0; left:0; width:100%; height:100%;
-  background:#fff; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;
-  transition: background 1s ease, opacity 2s ease;
-}
-#introContent { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; }
-#introText { font-family: 'Cinzel', serif; font-size:6vw; font-weight:700; color:#000; text-align:center; opacity:0; transform: scale(1); transition: opacity 1.5s ease, transform 0.5s ease, color 0.5s ease; }
-#lastWord, #towerWord { transition: color 0.5s ease; }
-#loadingCircle { position: relative; width: 80px; height: 80px; opacity:0; }
-#loadingCircle svg { transform: rotate(-90deg); }
-#loadingPercent { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel', serif; color:#000; font-weight:bold; font-size:16px; transition: opacity 1s ease; }
+#introScreen{ position: fixed; top:0; left:0; width:100%; height:100%; background:#fff; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; transition: background 1s ease, opacity 2s ease;}
+#introContent{ display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; }
+#introText{ font-family:'Cinzel', serif; font-size:6vw; font-weight:700; color:#000; text-align:center; opacity:0; transform: scale(1); transition: opacity 1.5s ease, transform 0.5s ease, color 0.5s ease; }
+#lastWord, #towerWord{ transition: color 0.5s ease; }
+#loadingCircle{ position: relative; width: 80px; height: 80px; opacity:0; }
+#loadingCircle svg{ transform: rotate(-90deg); }
+#loadingPercent{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel', serif; color:#000; font-weight:bold; font-size:16px; transition: opacity 1s ease; }
 
 /* =================== RESPONSIVE =================== */
 @media(max-width:600px){
-  .card{ flex-direction:column; align-items:center; }
   .avatar{ width:100px; height:100px; }
   .stats{ flex-direction:column; gap:4px; }
-  #itemInfoBar{ position:static; width:100%; max-width:none; }
+  #itemInfoBar{ position:static; width:100%; max-width:none; margin-top:10px; }
 }
 .selectBtn{ margin-top:6px; padding:4px 8px; background:#222; color:#d9b26c; border-radius:4px; border:1px solid #555; cursor:pointer; font-family:'Cinzel', serif, monospace; transition:0.2s; }
 .selectBtn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
+.modeSwitch{ position: fixed; top: 10px; right: 10px; display:flex; gap:5px; z-index:1000; }
+.modeSwitch button{ padding:4px 8px; border-radius:4px; border:1px solid #555; background:#222; color:#d9b26c; cursor:pointer; transition:0.2s; }
+.modeSwitch button.active{ background:#d9b26c; color:#111; font-weight:600; }
 </style>
 </head>
-<body>
+<body class="desktop">
+
+<!-- ================== MODE SWITCH =================== -->
+<div class="modeSwitch">
+  <button class="active" data-mode="desktop">Desktop</button>
+  <button data-mode="mobile">Mobile</button>
+</div>
+
 <!-- ================== INTRO SCREEN =================== -->
 <div id="introScreen">
   <div id="introContent">
@@ -192,14 +104,14 @@ button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
     <div id="loadingCircle">
       <svg width="80" height="80">
         <circle cx="40" cy="40" r="35" stroke="#555" stroke-width="4" fill="none" />
-        <circle id="progressCircle" cx="40" cy="40" r="35" stroke="#000" stroke-width="4" fill="none"
-                stroke-dasharray="219.911" stroke-dashoffset="219.911" stroke-linecap="round"/>
+        <circle id="progressCircle" cx="40" cy="40" r="35" stroke="#000" stroke-width="4" fill="none" stroke-dasharray="219.911" stroke-dashoffset="219.911" stroke-linecap="round"/>
       </svg>
       <div id="loadingPercent">0%</div>
     </div>
   </div>
 </div>
 
+<!-- ================== TABS =================== -->
 <div class="tabs">
   <div class="tab active" data-tab="tab1">Concept / Story</div>
   <div class="tab" data-tab="tab2">Character Preview</div>
@@ -218,16 +130,26 @@ button.stat-btn:hover{ background:#333; box-shadow:0 0 6px #d9b26c; }
 
 <div id="tab3" class="tab-content">
   <h2>Character Editor</h2>
-  <div id="editorContainer"></div>
+  <div id="editorContainer" style="display:flex; gap:12px; flex-wrap:wrap;"></div>
   <h3>Inventory / Items</h3>
   <div id="weaponsContainer" class="inventory"></div>
 </div>
 
 <div id="itemInfoBar"></div>
-
 <script>
+// =================== MODE SWITCH ===================
+const modeButtons = document.querySelectorAll('.modeSwitch button');
+modeButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modeButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.body.classList.remove('desktop','mobile');
+    document.body.classList.add(btn.dataset.mode);
+  });
+});
+
 // =================== INTRO SCREEN ===================
-window.addEventListener('load', ()=> {
+window.addEventListener('load', () => {
   const introText = document.getElementById('introText');
   const introScreen = document.getElementById('introScreen');
   const lastWord = document.getElementById('lastWord');
@@ -237,143 +159,140 @@ window.addEventListener('load', ()=> {
   const progressCircle = document.getElementById('progressCircle');
   const circleLength = 2 * Math.PI * 35;
 
-  setTimeout(()=> introText.style.opacity = 1, 100);
+  setTimeout(() => introText.style.opacity = 1, 100);
 
-  setTimeout(()=> {
+  setTimeout(() => {
     loadingCircle.style.transition = 'opacity 1s ease';
     loadingCircle.style.opacity = 1;
 
-    let start=null;
-    const duration=3000;
-    function animate(ts){
-      if(!start) start=ts;
+    let start = null;
+    const duration = 3000;
+    function animate(ts) {
+      if (!start) start = ts;
       const progress = ts - start;
-      const eased = easeOutCubic(Math.min(progress/duration,1));
-      const percent = Math.floor(eased*100);
+      const eased = easeOutCubic(Math.min(progress / duration, 1));
+      const percent = Math.floor(eased * 100);
       loadingPercent.innerText = percent + '%';
-      progressCircle.style.strokeDashoffset = circleLength*(1-eased);
-      if(progress<duration) requestAnimationFrame(animate);
-      else{
-        loadingPercent.innerText='100%';
-        progressCircle.style.strokeDashoffset=0;
-        introScreen.style.background='#000';
-        introText.style.color='#fff';
-        lastWord.style.color='#ff0000';
-        towerWord.style.color='#ff0000';
-        introText.style.transform='scale(0.7)';
-        setTimeout(()=> {
-          introText.style.opacity=0;
-          setTimeout(()=> loadingPercent.style.opacity=0,500);
-          setTimeout(()=> introScreen.style.display='none',2000);
-        },3000);
+      progressCircle.style.strokeDashoffset = circleLength * (1 - eased);
+      if (progress < duration) requestAnimationFrame(animate);
+      else {
+        loadingPercent.innerText = '100%';
+        progressCircle.style.strokeDashoffset = 0;
+        introScreen.style.background = '#000';
+        introText.style.color = '#fff';
+        lastWord.style.color = '#ff0000';
+        towerWord.style.color = '#ff0000';
+        introText.style.transform = 'scale(0.7)';
+        setTimeout(() => {
+          introText.style.opacity = 0;
+          setTimeout(() => loadingPercent.style.opacity = 0, 500);
+          setTimeout(() => introScreen.style.display = 'none', 2000);
+        }, 3000);
       }
     }
     requestAnimationFrame(animate);
-  },1500);
+  }, 1500);
 
-  function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 });
 
 // =================== TABS ===================
 const tabs = document.querySelectorAll('.tab');
 const contents = document.querySelectorAll('.tab-content');
-tabs.forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    tabs.forEach(t=>t.classList.remove('active'));
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    contents.forEach(c=>c.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
     document.getElementById(tab.dataset.tab).classList.add('active');
+
+    // ถ้าเปิด Preview tab ให้ render ใหม่
+    if (tab.dataset.tab === 'tab2') renderCharacterPreview();
   });
 });
 
 // =================== CHARACTERS ===================
 let chars = [
-  {id:'a', name:'Nine', role:'นักดาบสองมือ / The Swordman', hp:20, maxHp:20, atk:5, def:10, skill:'ถืออาวุธสองมือได้ด้วยมือเดียว', avatar:'images/1.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
-  {id:'b', name:'Aun', role:'นักแม่นปืน / The Gunner', hp:20, maxHp:20, atk:3, def:10, skill:'สร้างกระสุนเองได้', avatar:'images/Aun.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
-  {id:'d', name:'Lee', role:'นักพนัน / The Gambler', hp:20, maxHp:20, atk:3, def:10, skill:'รีเหรียญ', avatar:'images/Lee.JPG', avatarLowHP:'https://via.placeholder.com/120/ff0000', weapons:['','','']},
+  { id: 'a', name: 'Nine', role: 'นักดาบสองมือ / The Swordman', hp: 20, maxHp: 20, atk: 5, def: 10, skill: 'ถืออาวุธสองมือได้ด้วยมือเดียว', avatar: 'images/1.JPG', avatarLowHP: 'https://via.placeholder.com/120/ff0000', weapons: ['', '', ''] },
+  { id: 'b', name: 'Aun', role: 'นักแม่นปืน / The Gunner', hp: 20, maxHp: 20, atk: 3, def: 10, skill: 'สร้างกระสุนเองได้', avatar: 'images/Aun.JPG', avatarLowHP: 'https://via.placeholder.com/120/ff0000', weapons: ['', '', ''] },
+  { id: 'd', name: 'Lee', role: 'นักพนัน / The Gambler', hp: 20, maxHp: 20, atk: 3, def: 10, skill: 'รีเหรียญ', avatar: 'images/Lee.JPG', avatarLowHP: 'https://via.placeholder.com/120/ff0000', weapons: ['', '', ''] },
 ];
 
 // =================== WEAPONS ===================
 const weapons = [
-  {id:'w1', name:'ดาบสั้นพังๆ', skill:'ตะกั่วศักสิทธิ์', desc:'ใช้ได้ 1 ครั้ง', img:'images2/IMG_2349.JPG'},
-  {id:'w2', name:'ดาบยาวพังๆ', skill:'สตาร์เบิร์สสตรีม', desc:'ใช้ได้ 1 ครั้ง', img:'https://via.placeholder.com/40'},
-  {id:'w3', name:'ธนู แถมลูกธนู×3', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w4', name:'ลูกดอกธนู×5', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w5', name:'ชุดเกราะโซ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w6', name:'โล่ไม้', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w7', name:'ดาบสั้นขึ้นสนิม', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w8', name:'ดาบยาวขึ้นสนิม', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w9', name:'กระบองเล็ก', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w10', name:'กระบองขนาดใหญ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w11', name:'คำภีร์เวทย์ “ กูขอร่าย หนี้กยศ!!!! ”', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w12', name:'คำภีร์เวทย์ “ อังกฤษหรือสเปน ใครขยับมันเป็นเกย์!!! ”', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w13', name:'ลิ่มทำลายล้าง', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w14', name:'ปืนยาวแถมลูก5นัด', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
-  {id:'w15', name:'โคตรพ่อโคตรแม่ดาบใหญ่', skill:'ป้องกันสูง', desc:'โล่เหล็กหนา', img:'https://via.placeholder.com/40'},
+  { id: 'w1', name: 'ดาบสั้นพังๆ', skill: 'ตะกั่วศักสิทธิ์', desc: 'ใช้ได้ 1 ครั้ง', img: 'images2/IMG_2349.JPG' },
+  { id: 'w2', name: 'ดาบยาวพังๆ', skill: 'สตาร์เบิร์สสตรีม', desc: 'ใช้ได้ 1 ครั้ง', img: 'https://via.placeholder.com/40' },
+  { id: 'w3', name: 'ธนู แถมลูกธนู×3', skill: 'ป้องกันสูง', desc: 'โล่เหล็กหนา', img: 'https://via.placeholder.com/40' },
+  { id: 'w4', name: 'ลูกดอกธนู×5', skill: 'ป้องกันสูง', desc: 'โล่เหล็กหนา', img: 'https://via.placeholder.com/40' },
+  { id: 'w5', name: 'ชุดเกราะโซ่', skill: 'ป้องกันสูง', desc: 'โล่เหล็กหนา', img: 'https://via.placeholder.com/40' },
+  { id: 'w6', name: 'โล่ไม้', skill: 'ป้องกันสูง', desc: 'โล่เหล็กหนา', img: 'https://via.placeholder.com/40' }
 ];
 
 // =================== RENDER CHARACTER PREVIEW ===================
 const charsPreview = document.getElementById('charsPreview');
-charsPreview.innerHTML='';
-chars.forEach(c=>{
-  const el=document.createElement('div');
-  el.className='card';
-  el.innerHTML=`<img src="${c.avatar}" class="avatar"><div class="meta"><div class="name">${c.name}</div><div class="role">${c.role}</div></div><button class="selectBtn">Select</button>`;
-  el.querySelector('.selectBtn').addEventListener('click', ()=>{
-    charsPreview.style.transition='opacity 0.7s ease';
-    charsPreview.style.opacity=0;
-    setTimeout(()=>{
-      openEditor(c.id);
-      // switch to Character Editor tab
-      tabs.forEach(t=>t.classList.remove('active'));
-      document.querySelector('.tab[data-tab="tab3"]').classList.add('active');
-      contents.forEach(c=>c.classList.remove('active'));
-      document.getElementById('tab3').classList.add('active');
-    },700);
+function renderCharacterPreview() {
+  charsPreview.innerHTML = '';
+  charsPreview.style.opacity = 1;
+  chars.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = `<img src="${c.avatar}" class="avatar"><div class="meta"><div class="name">${c.name}</div><div class="role">${c.role}</div></div><button class="selectBtn">Select</button>`;
+    el.querySelector('.selectBtn').addEventListener('click', () => {
+      // Fade-out effect
+      charsPreview.style.transition = 'opacity 0.7s ease';
+      charsPreview.style.opacity = 0;
+      setTimeout(() => {
+        openEditor(c.id);
+        // switch to Character Editor tab
+        tabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('.tab[data-tab="tab3"]').classList.add('active');
+        contents.forEach(c => c.classList.remove('active'));
+        document.getElementById('tab3').classList.add('active');
+      }, 700);
+    });
+    charsPreview.appendChild(el);
   });
-  charsPreview.appendChild(el);
-});
+}
+renderCharacterPreview();
 
 // =================== RENDER INVENTORY ===================
 const weaponsContainer = document.getElementById('weaponsContainer');
-weaponsContainer.innerHTML='';
-weapons.forEach(w=>{
-  const el=document.createElement('div');
-  el.className='weaponCard';
-  el.innerHTML=`<img src="${w.img}">${w.name}`;
-  el.draggable=true;
-  el.title=`Skill: ${w.skill}\n${w.desc}`;
-  el.addEventListener('dragstart', e=> e.dataTransfer.setData('weaponId', w.id));
-  el.addEventListener('click', ()=> openWeaponInfo(w));
+weaponsContainer.innerHTML = '';
+weapons.forEach(w => {
+  const el = document.createElement('div');
+  el.className = 'weaponCard';
+  el.innerHTML = `<img src="${w.img}">${w.name}`;
+  el.draggable = true;
+  el.title = `Skill: ${w.skill}\n${w.desc}`;
+  el.addEventListener('dragstart', e => e.dataTransfer.setData('weaponId', w.id));
+  el.addEventListener('click', () => openWeaponInfo(w));
   weaponsContainer.appendChild(el);
 });
 
 // =================== ITEM INFO ===================
 const itemInfoBar = document.getElementById('itemInfoBar');
-function openWeaponInfo(w){
-  itemInfoBar.style.display='flex';
-  itemInfoBar.innerHTML=`<img src="${w.img}"><div><b>${w.name}</b></div><div>Skill: ${w.skill}</div><div>${w.desc}</div><button class="closeBtn">Close</button>`;
-  itemInfoBar.querySelector('.closeBtn').addEventListener('click', ()=> itemInfoBar.style.display='none');
+function openWeaponInfo(w) {
+  itemInfoBar.style.display = 'flex';
+  itemInfoBar.innerHTML = `<img src="${w.img}"><div><b>${w.name}</b></div><div>Skill: ${w.skill}</div><div>${w.desc}</div><button class="closeBtn">Close</button>`;
+  itemInfoBar.querySelector('.closeBtn').addEventListener('click', () => itemInfoBar.style.display = 'none');
 }
 
 // =================== OPEN EDITOR ===================
-function openEditor(charId){
-  const char = chars.find(c=>c.id===charId);
+function openEditor(charId) {
+  const char = chars.find(c => c.id === charId);
   const editor = document.getElementById('editorContainer');
   editor.innerHTML = `
 <div class="card" id="charCard">
-  <img src="${char.hp<=5 ? char.avatarLowHP : char.avatar}" class="avatar">
+  <img src="${char.hp <= 5 ? char.avatarLowHP : char.avatar}" class="avatar">
   <div class="meta">
     <div class="name">${char.name}</div>
     <div class="role">${char.role}</div>
-
     <div class="stats">
       <div class="stat">HP<br><input type="number" id="hpInput" value="${char.hp}" min="0" max="${char.maxHp}"></div>
       <div class="stat">ATK<br><input type="number" id="atkInput" value="${char.atk}" min="0"></div>
       <div class="stat">DEF<br><input type="number" id="defInput" value="${char.def}" min="0"></div>
     </div>
-    <div class="hp-bar"><div class="hp-inner" id="hpBar" style="width:${char.hp/char.maxHp*100}%"></div></div>
-
+    <div class="hp-bar"><div class="hp-inner" id="hpBar" style="width:${char.hp / char.maxHp * 100}%"></div></div>
     <div class="sub-tabs">
       <div class="sub-tab active" data-tab="skill">Skill</div>
       <div class="sub-tab" data-tab="weapons">Weapons</div>
@@ -383,7 +302,7 @@ function openEditor(charId){
     </div>
     <div class="sub-tab-content" id="weapons">
       <div class="inventory">
-        ${char.weapons.map((w,i)=>`<div class="weaponSlot" data-index="${i}">${w?'<img src="'+w.img+'">'+w.name:'Empty'}</div>`).join('')}
+        ${char.weapons.map((w, i) => `<div class="weaponSlot" data-index="${i}">${w ? '<img src="' + w.img + '">' + w.name : 'Empty'}</div>`).join('')}
       </div>
     </div>
   </div>
@@ -393,11 +312,11 @@ function openEditor(charId){
   // =================== SUB-TABS ===================
   const subTabs = editor.querySelectorAll('.sub-tab');
   const subContents = editor.querySelectorAll('.sub-tab-content');
-  subTabs.forEach(t=>{
-    t.addEventListener('click', ()=>{
-      subTabs.forEach(s=>s.classList.remove('active'));
+  subTabs.forEach(t => {
+    t.addEventListener('click', () => {
+      subTabs.forEach(s => s.classList.remove('active'));
       t.classList.add('active');
-      subContents.forEach(c=>c.classList.remove('active'));
+      subContents.forEach(c => c.classList.remove('active'));
       document.getElementById(t.dataset.tab).classList.add('active');
     });
   });
@@ -410,36 +329,28 @@ function openEditor(charId){
   const avatarImg = editor.querySelector('.avatar');
   const cardDiv = editor.querySelector('.card');
 
-  function updateHP(){
-    char.hp = Math.min(Math.max(0,parseInt(hpInput.value)||0),char.maxHp);
-    hpBar.style.width = (char.hp/char.maxHp*100)+'%';
-    if(char.hp <= 5){
-      avatarImg.src = char.avatarLowHP;
-      cardDiv.classList.add('low-hp');
-    } else {
-      avatarImg.src = char.avatar;
-      cardDiv.classList.remove('low-hp');
-    }
+  function updateHP() {
+    char.hp = Math.min(Math.max(0, parseInt(hpInput.value) || 0), char.maxHp);
+    hpBar.style.width = (char.hp / char.maxHp * 100) + '%';
+    if (char.hp <= 5) { avatarImg.src = char.avatarLowHP; cardDiv.classList.add('low-hp'); }
+    else { avatarImg.src = char.avatar; cardDiv.classList.remove('low-hp'); }
   }
   hpInput.addEventListener('input', updateHP);
-  atkInput.addEventListener('input', ()=> char.atk = parseInt(atkInput.value)||0 );
-  defInput.addEventListener('input', ()=> char.def = parseInt(defInput.value)||0 );
+  atkInput.addEventListener('input', () => char.atk = parseInt(atkInput.value) || 0);
+  defInput.addEventListener('input', () => char.def = parseInt(defInput.value) || 0);
 
   // =================== DRAG & DROP ===================
   editor.addEventListener('dragover', e => e.preventDefault());
   editor.addEventListener('drop', e => {
     const weaponId = e.dataTransfer.getData('weaponId');
-    const weapon = weapons.find(w=>w.id===weaponId);
+    const weapon = weapons.find(w => w.id === weaponId);
     const slot = e.target.closest('.weaponSlot');
-    if(slot && weapon){
+    if (slot && weapon) {
       const index = parseInt(slot.dataset.index);
-      char.weapons[index] = weapon; // บันทึก weapon
+      char.weapons[index] = weapon;
       slot.innerHTML = `<img src="${weapon.img}">${weapon.name}<button class="remove-btn">Remove</button>`;
       slot.classList.add('filled');
-
-      // ปุ่ม Remove
-      const removeBtn = slot.querySelector('.remove-btn');
-      removeBtn.addEventListener('click', ()=>{
+      slot.querySelector('.remove-btn').addEventListener('click', () => {
         slot.innerHTML = 'Empty';
         slot.classList.remove('filled');
         char.weapons[index] = '';
@@ -449,11 +360,11 @@ function openEditor(charId){
 
   // =================== INITIAL REMOVE BUTTONS ===================
   const slots = editor.querySelectorAll('.weaponSlot');
-  slots.forEach((slot,i)=>{
-    if(char.weapons[i]){
+  slots.forEach((slot, i) => {
+    if (char.weapons[i]) {
       slot.innerHTML = `<img src="${char.weapons[i].img}">${char.weapons[i].name}<button class="remove-btn">Remove</button>`;
       slot.classList.add('filled');
-      slot.querySelector('.remove-btn').addEventListener('click', ()=>{
+      slot.querySelector('.remove-btn').addEventListener('click', () => {
         slot.innerHTML = 'Empty';
         slot.classList.remove('filled');
         char.weapons[i] = '';
